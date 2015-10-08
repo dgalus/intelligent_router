@@ -1,0 +1,7 @@
+#ifndef ERRORS_H
+#define ERRORS_H
+
+#define UNABLE_TO_WRITE_TO_LOG_FILE 0x3
+#define ERROR_WHILE_WRITING_TO_LOG 0x4
+
+#endif // ERRORS_H
