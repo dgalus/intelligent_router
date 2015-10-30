@@ -26,7 +26,7 @@ int main(int argc, char* argv[])
   }
   else
   {
-    QuaggaAdapter::executeCommand(argc-1, argv+1);
+    QuaggaAdapter::executeCommand(argc-1, argv+1, true);
   }
   return 0;
 }
