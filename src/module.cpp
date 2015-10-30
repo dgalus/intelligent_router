@@ -17,7 +17,7 @@ struct ServerModule* moduleOpen(const char *moduleName)
 
     modulePath = (char *) xmalloc(strlen(moduleDir) + strlen(moduleName) + 2);
     sprintf(modulePath, "%s/%s", moduleDir, moduleName);
-    handle = dlopen(modulePath, RTLD_NOW);
+    handle = dlopen(modulePath, RTLD_LAZY);
     free(modulePath);
     if(handle == NULL)
     {
