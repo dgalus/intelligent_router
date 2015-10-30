@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<link href="bootstrap.min.css" rel="stylesheet" media="screen">
+		<style>
+			body {
+				padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+			}
+		</style>
+	</head>
+	<body>
+		<div class="navbar navbar-inverse navbar-fixed-top">
+			<div class="navbar-inner">
+				<div class="container">
+					<button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					<a class="brand" href="#">Router</a>
+					<div class="nav-collapse collapse">
+						<ul class="nav">
+							<li><a href="index">Strona główna</a></li>
+							<li><a href="interfaces">Interfejsy</a></li>
+							<li><a href="firewall">Zapora ogniowa</a></li>
+							<li><a href="management">Zarządzanie</a></li>
+							<li class="active"><a href="routing">Routing</a></li>
+						</ul>
+					</div><!--/.nav-collapse -->
+				</div>
+			</div>
+		</div>
+		<div class="container">
+			<form action="routing_save" method="post">
+				<h2>Routing</h2>
+				%s
+				%s
+				%s
+				<button type="submit" class="btn btn-large btn-primary pull-right" >Zapisz zmiany</button>
+			</form>
+			<div style="margin: 100px 0;"></div>
+		</div>
+	</body>
+</html>
