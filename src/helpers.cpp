@@ -37,7 +37,7 @@ void FileWriter::appendToFile(const std::string content)
 {
   size_t bytesWritten;
 
-  fileDescriptor = open(path.c_str(), O_APPEND);
+  fileDescriptor = open(path.c_str(), O_WRONLY | O_APPEND, 0644);
   if(fileDescriptor == -1)
   {
       exit(UNABLE_TO_WRITE_TO_LOG_FILE);
@@ -479,6 +479,8 @@ void Firewall::enableAdaptativeFirewall()
 void Firewall::flushAll()
 {
   system("iptables -F");
+  FileWriter* fw = new FileWriter(LOADED_POLICY);
+  fw->writeToFile("");
 }
 
 void Firewall::disableAdaptativeFirewall()
@@ -488,8 +490,15 @@ void Firewall::disableAdaptativeFirewall()
 
 void Firewall::applyNonAdaptativeFirewallPolicy(std::string & policyName)
 {
-  disableAdaptativeFirewall();
-  Policy *p = PolicyFactory::getInstance()->open(policyName.c_str());
+  std::string serviceName = "adaptativefirewall";
+  if(Service::isServiceRunning(serviceName))
+  {
+    disableAdaptativeFirewall();
+  }
+  std::string policyDirectory = std::string(POLICY_DIRECTORY);
+  std::string policyNameSo = policyName.append(".so");
+  PolicyFactory::getInstance()->setPolicyDirectory(policyDirectory);
+  Policy *p = PolicyFactory::getInstance()->open(policyNameSo.c_str());
   system(p->command);
   PolicyFactory::getInstance()->close(p);
 }
@@ -497,14 +506,13 @@ void Firewall::applyNonAdaptativeFirewallPolicy(std::string & policyName)
 void Firewall::forwardSinglePort(std::string app, uint16_t portOut, uint16_t portIn, bool isTCP, std::string ipAddress, bool enabled)
 {
   // CHECK IF RULE EXISTS IN FILE, DELETE UNUSED RULES.
-
   std::string portOutStr = std::to_string(portOut);
   std::string portInStr = std::to_string(portIn);
   std::string proto = ((isTCP) ? std::string("tcp") : std::string("udp"));
   FileWriter* fw = new FileWriter(FIREWALL_RULES);
-  fw->appendToFile("iptables -A FORWARD -m state -p " + proto + " -d " + ipAddress + " --dport " + portInStr + " --state NEW,ESTABLISHED,RELATED -j ACCEPT");
-  fw->appendToFile("iptables -t nat -A PREROUTING -p " + proto + " --dport " + portOutStr + " -j DNAT --to-destination " + ipAddress + ":" + portInStr);
-  delete fw;
+  fw->appendToFile("#" + app);
+  fw->appendToFile((enabled ? std::string("") : std::string("#")) + "iptables -A FORWARD -m state -p " + proto + " -d " + ipAddress + " --dport " + portInStr + " --state NEW,ESTABLISHED,RELATED -j ACCEPT");
+  fw->appendToFile((enabled ? std::string("") : std::string("#")) + "iptables -t nat -A PREROUTING -p " + proto + " --dport " + portOutStr + " -j DNAT --to-destination " + ipAddress + ":" + portInStr);
   update();
 }
 
@@ -512,7 +520,6 @@ void Firewall::update()
 {
   std::string command = "bash " + std::string(FIREWALL_RULES);
   system(command.c_str());
-  system("iptables-save");
 }
 
 void Service::start(std::string name)
@@ -538,9 +545,14 @@ void Service::start(std::string name)
 
 void Service::stop(std::string name)
 {
-  if(name == "adaptativefirewall" || name == "iptables" || name == "quagga")
+  if(name == "iptables")
   {
-    std::string command = "pkill `" + name + "`";
+    std::string command = "modprobe -r ip_tables";
+    system(command.c_str());
+  }
+  else
+  {
+    std::string command = "kill `pidof " + name + "`";
     system(command.c_str());
   }
 }
@@ -634,7 +646,6 @@ void Routing::enableRoutingProtocol(const std::string & interfaceName, const std
     QuaggaAdapter::pipeToQuaggaShell(command);
     FileWriter* fw = new FileWriter(ROUTING_PROTOCOLS);
     fw->appendToFile("\n" + protocol + " " + interfaceName);
-    delete fw;
   }
 }
 
@@ -669,7 +680,6 @@ void Routing::disableRoutingProtocol(const std::string & interfaceName, const st
   {
     fw->appendToFile(*it + "\n");
   }
-  delete fw;
 }
 
 std::string Routing::getStaticRoutes()
@@ -744,7 +754,6 @@ void Management::setWWWInterfacePort(uint16_t port)
   {
     FileWriter* fw = new FileWriter(WWW_PORT_FILE);
     fw->writeToFile(std::to_string(port));
-    delete fw;
   }
 }
 

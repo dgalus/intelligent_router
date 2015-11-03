@@ -21,7 +21,6 @@ Policy* PolicyFactory::open(const char *policyName)
 
     policyPath = (char *) xmalloc(this->policyDirectory.length() + strlen(policyName) + 2);
     sprintf(policyPath, "%s/%s", this->policyDirectory.c_str(), policyName);
-
     handle = dlopen(policyPath, RTLD_NOW);
     free(policyPath);
     if(handle == NULL)

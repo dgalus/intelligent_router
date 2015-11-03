@@ -53,6 +53,7 @@ static bool validAuthData(char* data)
 
 static void handleGet(int connectionFileDescriptor, const char* page)
 {
+  begin:
   struct ServerModule* module = NULL;
   if(*page == '/')
   {
@@ -69,6 +70,8 @@ static void handleGet(int connectionFileDescriptor, const char* page)
   }
   if(module == NULL)
   {
+    page = "/index";
+    goto begin;
     char response[1024];
     snprintf(response, sizeof(response), notFoundResponseTemplate.c_str(), page);
     write(connectionFileDescriptor, response, strlen(response));
@@ -267,7 +270,7 @@ void serverRun(in_addr localAddress, uint16_t port)
     {
       close(STDIN_FILENO);
       close(STDOUT_FILENO);
-      close(STDERR_FILENO);
+      //close(STDERR_FILENO);
       close(serverSocket);
       handleConnection(connection);
       close(connection);

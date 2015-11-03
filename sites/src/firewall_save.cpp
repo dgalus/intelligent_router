@@ -19,9 +19,17 @@ extern "C" void doAction(std::map<std::string, std::string> & postVars)
   {
     Firewall::disableAdaptativeFirewall();
   }
-  if(postVars["policy"] != "none")
+  it = postVars.find("policy");
+  if(it != postVars.end())
   {
-    Firewall::applyNonAdaptativeFirewallPolicy(postVars["policy"]);
+    if(it->second != "none")
+    {
+      Firewall::applyNonAdaptativeFirewallPolicy(postVars["policy"]);
+    }
+    else
+    {
+      Firewall::flushAll();
+    }
   }
   std::string defaultMask = "0.0.0.0";
   for(int i = 1; i < 5; i++)

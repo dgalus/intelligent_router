@@ -114,6 +114,8 @@ int main(int argc, char* argv[])
 
     /* setting up log file */
     Log::getInstance()->setPath(std::string(LOG_FILE));
+    std::string test = "Adaptative Firewall Started";
+    Log::getInstance()->write(test);
 
     /* Daemonize */
     //daemonize((char *) "/tmp/", const_cast<char*>(m.adaptativeFirewallPidFile.c_str()));

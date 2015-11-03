@@ -43,7 +43,7 @@ extern "C" std::string renderPortForwardingTable()
 		ret.append("<tr><td><input type=\"text\" class=\"input-small\" name=\"spf_app_" + std::to_string(i) + "\" /></td>");
 		ret.append("<td><input type=\"text\" class=\"input-small\" name=\"spf_portout_" + std::to_string(i) + "\" /></td>");
 		ret.append("<td><input type=\"text\" class=\"input-small\" name=\"spf_portin_" + std::to_string(i) + "\" /></td>");
-		ret.append("<td><select class=\"input-small\"><option name=\"spf_proto_" + std::to_string(i) + "\" selected=\"TCP\" value=\"TCP\">TCP</option><option name=\"spf_proto_" + std::to_string(i) + "\" value=\"UDP\">UDP</option></select></td>");
+		ret.append("<td><select name=\"spf_proto_" + std::to_string(i) + "\" class=\"input-small\"><option selected=\"TCP\" value=\"TCP\">TCP</option><option value=\"UDP\">UDP</option></select></td>");
 		ret.append("<td><input type=\"text\" class=\"input-small\" name=\"spf_ip_" + std::to_string(i) + "\" /></td><td><input type=\"checkbox\" value=\"true\" name=\"spf_en_" + std::to_string(i) + "\" /></td>");
 		ret.append("</tr>");
 	}

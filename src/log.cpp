@@ -22,7 +22,7 @@ void Log::write(const std::string & content)
                     + " " + std::to_string(tms.tm_hour)
                     + "-" + std::to_string(tms.tm_min)
                     + "-" + std::to_string(tms.tm_sec)
-                    + "] "+ content
+                    + "] "+ content + "\n"
                     );
     }
     else
@@ -45,7 +45,7 @@ void Log::append(const std::string & content)
                     + " " + std::to_string(tms.tm_hour)
                     + "-" + std::to_string(tms.tm_min)
                     + "-" + std::to_string(tms.tm_sec)
-                    + "] "+ content
+                    + "] "+ content + "\n"
                     );
     }
     else

@@ -9,7 +9,7 @@
 
 extern "C" void doAction(std::map<std::string, std::string> & postVars)
 {
-  if(postVars["enable_www"] == "no")
+  if(postVars.find("enable_www") != postVars.end() && postVars["enable_www"] == "no" )
   {
     Management::disableWWWInterface();
   }

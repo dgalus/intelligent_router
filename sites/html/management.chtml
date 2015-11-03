@@ -33,7 +33,7 @@
 		</div>
 		<div class="container">
 			<h2>Zarządzenie routerem</h2>
-			<form>
+			<form method="post" action="management_save">
 				<fieldset>
 					%s
 					%s

@@ -11,7 +11,7 @@ extern "C" std::string renderWWWInterfaceTable()
 	ret.append("<p><h4>Interfejs WWW</h4><table class=\"table\"><tr><td>Włączyć interfejs WWW</td>");
 	ret.append("<td><input type=\"radio\" name=\"enable_www\" value=\"yes\" checked /> TAK <br><input type=\"radio\" name=\"enable_www\" value=\"no\" /> NIE</td>");
 	ret.append("</tr><tr><td>Port interfejsu WWW:</td>");
-	ret.append("<td><input type=\"text\" name=\"www_interface_port\" placeholder=\"" + std::to_string(Management::getWWWInterfacePort()) + "\" /></td>");
+	ret.append("<td><input type=\"text\" name=\"www_interface_port\" value=\"" + std::to_string(Management::getWWWInterfacePort()) + "\" /></td>");
 	ret.append("</tr></table></p>");
 	return ret;
 }

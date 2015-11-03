@@ -35,20 +35,6 @@
 #define birthtime(x) x.st_ctime
 #endif
 
-enum RoutingProto
-{
-  RIP,
-  RIPv2,
-  OSPF,
-  BGP
-};
-
-struct RoutingProtocolInterface
-{
-  std::string interface;
-  RoutingProto rp;
-};
-
 class FileWriter
 {
 public:

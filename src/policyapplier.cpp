@@ -143,12 +143,13 @@ void PolicyApplier::applyPolicy()
   {
     if(system(selectedPolicy->command))
     {
-      Log::getInstance()->append("Failed to apply policy " + std::string(selectedPolicy->name));
+      std::string log = "Failed to apply policy " + std::string(selectedPolicy->name);
+      Log::getInstance()->append(log);
     }
     else
     {
-      fprintf(stderr, "Policy %s applied.\n", selectedPolicy->name);
-      Log::getInstance()->append("Policy " + std::string(selectedPolicy->name) + "applied.");
+      std::string log = "Policy " + std::string(selectedPolicy->name) + " applied";
+      Log::getInstance()->append(log);
     }
   }
 }
