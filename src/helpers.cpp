@@ -510,7 +510,7 @@ void Firewall::forwardSinglePort(std::string app, uint16_t portOut, uint16_t por
 
 void Firewall::update()
 {
-  std::string command = "bash " + FIREWALL_RULES;
+  std::string command = "bash " + std::string(FIREWALL_RULES);
   system(command.c_str());
   system("iptables-save");
 }

@@ -15,7 +15,7 @@ void AdaptativeFirewallAdapter::executeCommand(int argc, char* argv[])
     }
     else
     {
-      printUsage();
+      fprintf(stderr, "Invalid action. Valid actions are:\n\tmanual\n\tadaptative\n");
     }
   }
   else if(std::string(argv[0]) == "disable")
@@ -30,11 +30,11 @@ void AdaptativeFirewallAdapter::executeCommand(int argc, char* argv[])
     }
     else
     {
-      printUsage();
+      fprintf(stderr, "Invalid action. Valid actions are:\n\tmanual\n\tadaptative\n");
     }
   }
   else
   {
-    printUsage();
+    fprintf(stderr, "Invalid action. Valid actions are:\n\tenable\n\tdisable\n");
   }
 }

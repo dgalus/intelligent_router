@@ -4,15 +4,15 @@
 
 static int aggressivnessLevel = 30;
 
-extern "C" char* getName()
+extern "C" const char* getName()
 {
-  char* name = "Policy30";
+  const char* name = "Policy30";
   return name;
 }
 
-extern "C" char* getCommand()
+extern "C" const char* getCommand()
 {
-  char* command = "bash ../policy/policy30.sh";
+  const char* command = "bash ../policy/policy30.sh";
   return command;
 }
 

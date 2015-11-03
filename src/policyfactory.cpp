@@ -15,8 +15,8 @@ Policy* PolicyFactory::open(const char *policyName)
 {
     char* policyPath;
     void* handle;
-    char* (* getName)();
-    char* (* getCommand)();
+    const char* (* getName)();
+    const char* (* getCommand)();
     int (* getAggressivnessLevel)();
 
     policyPath = (char *) xmalloc(this->policyDirectory.length() + strlen(policyName) + 2);
@@ -29,14 +29,14 @@ Policy* PolicyFactory::open(const char *policyName)
         return NULL;
     }
 
-    getName = (char* (*)()) dlsym(handle, "getName");
+    getName = (const char* (*)()) dlsym(handle, "getName");
     if(getName == NULL)
     {
         dlclose(handle);
         return NULL;
     }
 
-    getCommand = (char* (*)()) dlsym(handle, "getCommand");
+    getCommand = (const char* (*)()) dlsym(handle, "getCommand");
     if(getCommand == NULL)
     {
         dlclose(handle);
