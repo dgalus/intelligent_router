@@ -12,7 +12,13 @@ struct Serv {
 };
 
 static std::vector<Serv> services = {
-	Serv("quagga", "Quagga Router"),
+	Serv("zebra", "Zebra Router"),
+	Serv("ripd", "RIP Daemon"),
+	Serv("ripngd", "RIPng Daemon"),
+	Serv("ospfd", "OSPF Daemon"),
+	Serv("bgpd", "BGP Daemon"),
+	Serv("ospf6d", "OSPF6 Daemon"),
+	Serv("isisd", "IS-IS Daemon"),
 	Serv("iptables", "iptables firewall"),
 	Serv("adaptativefirewall", "Adaptative Firewall")
 };

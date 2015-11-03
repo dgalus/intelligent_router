@@ -421,20 +421,9 @@ void Interface::setInterfaceAddress(std::string interfaceName, std::string & ipA
 
 bool Firewall::getAdaptativeFirewallState()
 {
-  char buf[8];
-  memset(buf, 0, sizeof(buf));
-  FILE *p;
-  p = popen("ps cax | grep adaptativefirewall > /dev/null; if [ $? -eq 0 ]; then echo \"yes\"; else echo \"no\"; fi", "r");
-  fgets(buf, 256, p);
-  fclose(p);
-  if(std::string(buf).find("yes") != std::string::npos)
-  {
-    return true;
-  }
-  else
-  {
-    return false;
-  }
+  std::string serviceName = "adaptativefirewall";
+  bool isRunning = Service::isServiceRunning(serviceName);
+  return isRunning;
 }
 
 std::string Firewall::getNonAdaptativeFirewallLoadedPolicy()
@@ -457,6 +446,29 @@ std::vector<std::string> Firewall::getAvailablePolicies()
     }
   }
   return v;
+}
+
+std::string Firewall::getRules()
+{
+  std::string content = "";
+  char buf[256];
+  memset(buf, 0, sizeof(buf));
+  FILE *p;
+  p = popen("iptables -L -n", "r");
+  if(p)
+  {
+    while(!feof(p))
+    {
+      if(fgets(buf, sizeof(256), p) != NULL)
+      {
+        content.append(std::string(buf));
+        memset(buf, 0, sizeof(buf));
+      }
+    }
+  }
+  fclose(p);
+  std::string validatedContent = StringHelper::replaceAll(content, "\n", "<br />");
+  return validatedContent;
 }
 
 void Firewall::enableAdaptativeFirewall()
@@ -486,17 +498,42 @@ void Firewall::forwardSinglePort(std::string app, uint16_t portOut, uint16_t por
 {
   // CHECK IF RULE EXISTS IN FILE, DELETE UNUSED RULES.
 
-  //iptables -A FORWARD -m state -p tcp -d 192.168.1.200 --dport 8080 --state NEW,ESTABLISHED,RELATED -j ACCEPT
-  //iptables -t nat -A PREROUTING -p tcp --dport 8001 -j DNAT --to-destination 192.168.1.200:8080
+  std::string portOutStr = std::to_string(portOut);
+  std::string portInStr = std::to_string(portIn);
+  std::string proto = ((isTCP) ? std::string("tcp") : std::string("udp"));
+  FileWriter* fw = new FileWriter(FIREWALL_RULES);
+  fw->appendToFile("iptables -A FORWARD -m state -p " + proto + " -d " + ipAddress + " --dport " + portInStr + " --state NEW,ESTABLISHED,RELATED -j ACCEPT");
+  fw->appendToFile("iptables -t nat -A PREROUTING -p " + proto + " --dport " + portOutStr + " -j DNAT --to-destination " + ipAddress + ":" + portInStr);
+  delete fw;
+  update();
+}
 
+void Firewall::update()
+{
+  std::string command = "bash " + FIREWALL_RULES;
+  system(command.c_str());
+  system("iptables-save");
 }
 
 void Service::start(std::string name)
 {
-  if(name == "adaptativefirewall" || name == "iptables" || name == "quagga")
+  if(name == "iptables")
+  {
+    system("modprobe ip_tables");
+    return;
+  }
+  if(name == "quagga" || name == "zebra")
+  {
+    system("zebra -d");
+    return;
+  }
+  if(name == "adaptativefirewall")
   {
     system(name.c_str());
+    return;
   }
+  std::string command = name + " -d";
+  system(command.c_str());
 }
 
 void Service::stop(std::string name)
@@ -515,7 +552,7 @@ bool Service::isServiceRunning(std::string & name)
   FILE *p;
   if(name == "iptables")
   {
-    p = popen(std::string("systemctl status iptables > /dev/null; echo $?").c_str(), "r");
+    p = popen(std::string("lsmod | grep ip_tables > /dev/null; echo $?").c_str(), "r");
     fgets(buf, 256, p);
     fclose(p);
     int val = atoi(buf);
@@ -528,7 +565,7 @@ bool Service::isServiceRunning(std::string & name)
       return false;
     }
   }
-  p = popen(std::string("ps cax | grep " + name + " > /dev/null; if [ $? -eq 0 ]; then   echo \"yes\"; else   echo \"no\"; fi").c_str(), "r");
+  p = popen(std::string("ps caux | grep " + name.substr(0, 15) + " > /dev/null; if [ $? -eq 0 ]; then echo \"yes\"; else echo \"no\"; fi").c_str(), "r");
   fgets(buf, 256, p);
   fclose(p);
   if(std::string(buf).find("yes") != std::string::npos)
@@ -584,14 +621,55 @@ void Routing::enableRoutingProtocol(const std::string & interfaceName, const std
 {
   std::string fileContent = FileReader::readFile(std::string(ROUTING_PROTOCOLS));
   std::vector<std::string> fileContentSplitted = StringHelper::explode(fileContent, '\n');
-  std::for_each(fileContentSplitted.begin(), fileContentSplitted.end(), [](std::string & s) {
-    ///////////////////////////////
+  bool found = false;
+  std::for_each(fileContentSplitted.begin(), fileContentSplitted.end(), [&found, &interfaceName, &protocol](std::string & s) {
+    if(s.find(interfaceName) != std::string::npos && s.find(protocol) != std::string::npos)
+    {
+      found = true;
+    }
   });
+  if(found == false)
+  {
+    std::string command = "configure terminal\" -c \"router " + protocol + "\" -c \"network " + interfaceName;
+    QuaggaAdapter::pipeToQuaggaShell(command);
+    FileWriter* fw = new FileWriter(ROUTING_PROTOCOLS);
+    fw->appendToFile("\n" + protocol + " " + interfaceName);
+    delete fw;
+  }
 }
 
 void Routing::disableRoutingProtocol(const std::string & interfaceName, const std::string & protocol)
 {
-
+  std::string fileContent = FileReader::readFile(ROUTING_PROTOCOLS);
+  std::vector<std::string> fileContentSplitted = StringHelper::explode(fileContent, '\n');
+  std::for_each(fileContentSplitted.begin(), fileContentSplitted.end(), [&interfaceName, &protocol](std::string & s){
+    if(s.find(interfaceName) != std::string::npos && s.find(protocol) != std::string::npos)
+    {
+      std::string command = "configure terminal\" -c \"router " + protocol + "\" -c \"no network " + interfaceName;
+      QuaggaAdapter::pipeToQuaggaShell(command);
+    }
+  });
+  std::vector<std::string>::iterator elementsToRemove = std::remove_if(fileContentSplitted.begin(), fileContentSplitted.end(),[&protocol, &interfaceName](std::string & s){
+    if(s.find(interfaceName) != std::string::npos && s.find(protocol) != std::string::npos)
+    {
+      return true;
+    }
+    else
+    {
+      return false;
+    }
+  });
+  fileContentSplitted.erase(elementsToRemove, fileContentSplitted.end());
+  FileWriter* fw = new FileWriter(ROUTING_PROTOCOLS);
+  if(fileContentSplitted.begin() != fileContentSplitted.end())
+  {
+    fw->writeToFile(*(fileContentSplitted.begin()) + "\n");
+  }
+  for(std::vector<std::string>::iterator it = fileContentSplitted.begin() + 1; it != fileContentSplitted.end(); it++)
+  {
+    fw->appendToFile(*it + "\n");
+  }
+  delete fw;
 }
 
 std::string Routing::getStaticRoutes()
@@ -662,10 +740,11 @@ void Management::disableWWWInterface()
 
 void Management::setWWWInterfacePort(uint16_t port)
 {
-  // save to config file
-  if(port == 80 || (port > 1023 && port < 65536))
+  if(port == 80 || port > 1023)
   {
-
+    FileWriter* fw = new FileWriter(WWW_PORT_FILE);
+    fw->writeToFile(std::to_string(port));
+    delete fw;
   }
 }
 

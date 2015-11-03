@@ -5,7 +5,7 @@
 #include "adaptative_firewall_adapter.h"
 #include "quagga_adapter.h"
 
-static std::string usageTemplate = "";
+static std::string usageTemplate = "Usage: show <module> \n";
 
 void printUsage(int errorCode)
 {

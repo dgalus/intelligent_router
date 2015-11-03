@@ -30,25 +30,7 @@ extern "C" std::string renderAdaptativeFirewallTable()
 
 extern "C" std::string renderLoadedFirewallRulesPanel()
 {
-	std::string content = "";
-	char buf[256];
-	memset(buf, 0, sizeof(buf));
-	FILE *p;
-	p = popen("iptables -L -n", "r");
-	if(p)
-	{
-		while(!feof(p))
-		{
-			if(fgets(buf, sizeof(256), p) != NULL)
-			{
-				content.append(std::string(buf));
-				memset(buf, 0, sizeof(buf));
-			}
-		}
-	}
-	fclose(p);
-	std::string validatedContent = StringHelper::replaceAll(content, "\n", "<br />");
-	std::string ret = "<h4>Zastosowane reguły firewalla</h4><p><code>" + validatedContent + "</code></p><br /><br />";
+	std::string ret = "<h4>Zastosowane reguły firewalla</h4><p><code>" + Firewall::getRules() + "</code></p><br /><br />";
 	return ret;
 }
 

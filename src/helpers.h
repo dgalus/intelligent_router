@@ -27,6 +27,7 @@
 #include "errors.h"
 #include "configuration.h"
 #include "policyfactory.h"
+#include "quagga_adapter.h"
 
 #ifdef HAVE_ST_BIRTHTIME
 #define birthtime(x) x.st_birthtime
@@ -144,12 +145,14 @@ class Firewall
 public:
   static bool getAdaptativeFirewallState();
   static std::string getNonAdaptativeFirewallLoadedPolicy();
+  static std::string getRules();
   static std::vector<std::string> getAvailablePolicies();
   static void enableAdaptativeFirewall();
   static void disableAdaptativeFirewall();
   static void applyNonAdaptativeFirewallPolicy(std::string & policyName);
   static void forwardSinglePort(std::string app, uint16_t portOut, uint16_t portIn, bool isTCP, std::string ipAddress, bool enabled);
   static void flushAll();
+  static void update();
 };
 
 class Service

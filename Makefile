@@ -6,8 +6,8 @@ LIBS=-lpam -lpam_misc -ldl
 all: criterions policies adaptativefirewall set show modules www
 	rm *.o
 
-adaptativefirewall: common.o log.o policyfactory.o criterionfactory.o configfile.o policyapplier.o helpers.o adaptativefirewall.o
-	$(CC) -Wl,-O1 common.o log.o policyfactory.o criterionfactory.o configfile.o policyapplier.o helpers.o adaptativefirewall.o -o bin/adaptativefirewall -ldl
+adaptativefirewall: common.o log.o policyfactory.o criterionfactory.o configfile.o policyapplier.o helpers.o quagga_adapter.o adaptativefirewall.o
+	$(CC) -Wl,-O1 common.o log.o policyfactory.o criterionfactory.o configfile.o policyapplier.o helpers.o quagga_adapter.o adaptativefirewall.o -o bin/adaptativefirewall -ldl
 
 criterions: criterion/src/ping.cpp criterion/src/cpu_usage.cpp criterion/src/ram_usage.cpp criterion/src/processes.cpp
 	$(CC) $(SOCFLAGS) -o criterion/ping.so criterion/src/ping.cpp
@@ -58,8 +58,8 @@ quagga_adapter.o: src/quagga_adapter.cpp
 adaptative_firewall_adapter.o: src/adaptative_firewall_adapter.cpp
 	$(CC) $(CFLAGS) src/adaptative_firewall_adapter.cpp
 
-www: common.o policyfactory.o helpers.o main.o server.o log.o module.o
-	$(CC) -Wl,-O1 -o bin/www common.o policyfactory.o helpers.o main.o server.o log.o module.o $(LIBS)
+www: common.o policyfactory.o helpers.o main.o server.o log.o module.o quagga_adapter.o
+	$(CC) -Wl,-O1 -o bin/www common.o policyfactory.o helpers.o main.o server.o log.o quagga_adapter.o module.o $(LIBS)
 
 helpers.o: src/helpers.cpp
 	$(CC) $(CFLAGS) src/helpers.cpp

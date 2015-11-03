@@ -267,7 +267,7 @@ void serverRun(in_addr localAddress, uint16_t port)
     {
       close(STDIN_FILENO);
       close(STDOUT_FILENO);
-      //close(STDERR_FILENO);
+      close(STDERR_FILENO);
       close(serverSocket);
       handleConnection(connection);
       close(connection);

@@ -12,7 +12,6 @@ class QuaggaAdapter
 {
 public:
   static void executeCommand(int argc, char* argv[], bool enableMode);
-private:
   static void pipeToQuaggaShell(std::string & command);
 };
 

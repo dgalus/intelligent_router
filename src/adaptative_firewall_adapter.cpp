@@ -38,8 +38,3 @@ void AdaptativeFirewallAdapter::executeCommand(int argc, char* argv[])
     printUsage();
   }
 }
-
-void AdaptativeFirewallAdapter::printUsage()
-{
-  printf("%s\n", usageTemplate);
-}

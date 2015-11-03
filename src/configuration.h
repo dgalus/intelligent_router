@@ -11,8 +11,8 @@
 #define MODULES_DIR "../sites/"
 #define HTML_TEMPLATES "../sites/html/"
 #define CSS_TEMPLATES "../sites/css/"
-#define CRITERION_DIRECTORY "../criterion/"
-#define POLICY_DIRECTORY "../policy/"
+#define CRITERION_DIRECTORY "../criterion"
+#define POLICY_DIRECTORY "../policy"
 
 #define WWW_PID_FILE VAR_DIRECTORY "www.pid"
 #define AF_PID_FILE VAR_DIRECTORY "af.pid"
