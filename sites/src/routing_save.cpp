@@ -17,6 +17,8 @@ std::vector<RoutingProtocol> routingProtocols = {
 	RoutingProtocol("rip", "RIP"),
 	RoutingProtocol("ripng", "RIPv2"),
 	RoutingProtocol("ospf", "OSPF"),
+	RoutingProtocol("ospf6", "OSPF6"),
+	RoutingProtocol("isis", "IS-IS"),
 	RoutingProtocol("bgp", "BGP")
 };
 
@@ -24,11 +26,6 @@ std::vector<std::string> interfaces;
 
 extern "C" void doAction(std::map<std::string, std::string> & postVars)
 {
-	for(auto it = postVars.begin(); it != postVars.end(); it++)
-	{
-		fprintf(stderr, "%s -> %s\n", it->first.c_str(), it->second.c_str());
-	}
-
 	std::map<std::string, bool> routingVars;
 	for(std::vector<RoutingProtocol>::iterator it = routingProtocols.begin(); it != routingProtocols.end(); it++)
 	{
@@ -45,6 +42,7 @@ extern "C" void doAction(std::map<std::string, std::string> & postVars)
 			}
 		}
 	}
+	std::string defaultMask = "0.0.0.0";
 	for(int i=0; i < 5; i++)
 	{
 		std::map<std::string, std::string>::iterator routeFinder = postVars.find("route_" + std::to_string(i));
@@ -53,8 +51,12 @@ extern "C" void doAction(std::map<std::string, std::string> & postVars)
 			std::map<std::string, std::string>::iterator pathFinder = postVars.find("via_" + std::to_string(i));
 			if(pathFinder != postVars.end())
 			{
-				////////// ?????????????????????????????????????????????? mask?
-				//addStaticRoute(const std::string & targetAddress, const std::string & viaAddress, const std::string & netmask, postVars["iface_" + std::to_string(i)]);
+				std::string targetAddressMask = routeFinder->second;
+				std::string viaAddress = pathFinder->second;
+				if(IP::isValidAddrMask(targetAddressMask) && IP::isValidHostIP(viaAddress, defaultMask))
+				{
+					Routing::addStaticRoute(targetAddressMask, viaAddress, postVars["iface_" + std::to_string(i)]);
+				}
 			}
 		}
 	}

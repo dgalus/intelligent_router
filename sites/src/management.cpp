@@ -20,7 +20,7 @@ extern "C" std::string renderResetTable()
 {
 	std::string ret = "";
 	ret.append("<p><h4>Wykonaj reset</h4><table class=\"table\"><tr>");
-	ret.append("<td><input type=\"checkbox\" name=\"soft_reset\" value=\"soft_reset\" /> SOFT RESET</td>");
+	ret.append("<td><input type=\"checkbox\" name=\"soft_reset\" value=\"reset\" /> RESET</td>");
 	ret.append("</tr></table></p>");
 	return ret;
 }

@@ -17,6 +17,8 @@ std::vector<RoutingProtocol> routingProtocols = {
 	RoutingProtocol("rip", "RIP"),
 	RoutingProtocol("ripng", "RIPv2"),
 	RoutingProtocol("ospf", "OSPF"),
+	RoutingProtocol("ospf6", "OSPF6"),
+	RoutingProtocol("isis", "IS-IS"),
 	RoutingProtocol("bgp", "BGP")
 };
 
@@ -34,7 +36,7 @@ extern "C" std::string renderRoutingProtocolsTable()
 			out.append("<tr><td>" + *it + "</td><td><div class=\"row\">");
 			for(std::vector<RoutingProtocol>::iterator it2 = routingProtocols.begin(); it2 != routingProtocols.end(); it2++)
 			{
-				out.append("<div><input type=\"checkbox\" name=\"" + *it + "_" + it2->name + "\" /> " + it2->displayName + "&nbsp;</div>");
+				out.append("<input type=\"checkbox\" name=\"" + *it + "_" + it2->name + "\" value=\"on\"> " + it2->displayName + "</input><br />");
 			}
 			out.append("</div><td></tr>");
 		}
@@ -50,8 +52,8 @@ extern "C" std::string renderStaticRoutingTable()
 	out.append("<table class=\"table table-striped\"><thead><tr><th>Trasa docelowa</th><th>Przez adres IP:</th><th>Przez interfejs:</th></tr></thead><tbody>");
 	for(int i = 0; i < 5; i++)
 	{
-		out.append("<tr><td><input type=\"text\" name=\"route_" + std::to_string(i) + "\" /></td>");
-		out.append("<td><input type=\"text\" name=\"via_" + std::to_string(i) + "\" /></td>");
+		out.append("<tr><td><input type=\"text\" name=\"route_" + std::to_string(i) + "\" placeholder=\"xxx.xxx.xxx.xxx/mm\" /></td>");
+		out.append("<td><input type=\"text\" name=\"via_" + std::to_string(i) + "\" placeholder=\"xxx.xxx.xxx.xxx\" /></td>");
 		out.append("<td><select name=\"iface_" + std::to_string(i) + "\">");
 		for(std::vector<std::string>::iterator it = interfaces.begin(); it != interfaces.end(); it++)
 		{

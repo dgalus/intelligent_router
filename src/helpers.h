@@ -90,6 +90,8 @@ public:
   static bool isValidHostIP(std::string & addr, std::string & msk);
   static std::string maskToString(const std::string & input);
   static std::vector<std::string> const getMasks();
+  static bool isNetworkOrHostAddress(std::string & addr, std::string & msk);
+  static bool isValidAddrMask(std::string & addrMsk);
 };
 
 class Port
@@ -122,7 +124,7 @@ public:
   static void enableRoutingProtocol(const std::string & interfaceName, const std::string & protocol);
   static void disableRoutingProtocol(const std::string & interfaceName, const std::string & protocol);
   static std::string getStaticRoutes();
-  static void addStaticRoute(const std::string & targetAddress, const std::string & viaAddress, const std::string & netmask, const std::string & viaInterface);
+  static void addStaticRoute(const std::string & targetAddressMask, const std::string & viaAddress, const std::string & viaInterface);
   static void removeStaticRoute(const std::string & targetAddress, const std::string & netmask, const std::string & interface);
 };
 

@@ -214,6 +214,70 @@ const std::vector<unsigned char> IP::validMaskOctets()
   return validMaskOctetsVector;
 }
 
+bool IP::isValidAddrMask(std::string & addrMsk)
+{
+  char address[16];
+  int maskSize;
+  memset(&address, 0, sizeof(address));
+  sscanf(addrMsk.c_str(), "%s/%d", address, &maskSize);
+  if(maskSize > -1 && maskSize < 33)
+  {
+    std::string addr = std::string(address);
+    std::string mask = getMasks()[maskSize];
+    return isNetworkOrHostAddress(addr, mask);
+  }
+  else
+  {
+    return false;
+  }
+}
+
+bool IP::isNetworkOrHostAddress(std::string & addr, std::string & msk)
+{
+  uint8_t a[4];
+  uint8_t m[4];
+  sscanf(addr.c_str(), "%" SCNd8 ".%" SCNd8 ".%" SCNd8 ".%" SCNd8 "", &a[0], &a[1], &a[2], &a[3]);
+  sscanf(msk.c_str(), "%" SCNd8 ".%" SCNd8 ".%" SCNd8 ".%" SCNd8 "", &m[0], &m[1], &m[2], &m[3]);
+
+  for(int i = 0; i < 4; i++)
+  {
+    if(std::find(validMaskOctets().begin(), validMaskOctets().end(), m[i]) == validMaskOctets().end())
+    {
+      return false;
+    }
+  }
+
+  unsigned int address = a[0];
+  address <<= 8;
+  address += a[1];
+  address <<= 8;
+  address += a[2];
+  address <<= 8;
+  address += a[3];
+
+  unsigned int mask = m[0];
+  mask <<= 8;
+  mask += m[1];
+  mask <<= 8;
+  mask += m[2];
+  mask <<= 8;
+  mask += m[3];
+
+  if((address & mask) == address)
+  {
+    return true;
+  }
+  if((address | ~(mask)) == address)
+  {
+    return false;
+  }
+  if((address >= 0x7F000000 && address <= 0x7FFFFFFF) || (address <= 0x00FFFFFF))
+  {
+    return false;
+  }
+  return true;
+}
+
 bool IP::isValidHostIP(std::string & addr, std::string & msk)
 {
   uint8_t a[4];
@@ -496,6 +560,8 @@ void Firewall::applyNonAdaptativeFirewallPolicy(std::string & policyName)
     disableAdaptativeFirewall();
   }
   std::string policyDirectory = std::string(POLICY_DIRECTORY);
+  FileWriter* fw = new FileWriter(LOADED_POLICY);
+  fw->writeToFile(policyName);
   std::string policyNameSo = policyName.append(".so");
   PolicyFactory::getInstance()->setPolicyDirectory(policyDirectory);
   Policy *p = PolicyFactory::getInstance()->open(policyNameSo.c_str());
@@ -697,22 +763,10 @@ std::string Routing::getStaticRoutes()
   return StringHelper::replaceAll(output, "\n", "<br />");
 }
 
-void Routing::addStaticRoute(const std::string & targetAddress, const std::string & viaAddress, const std::string & netmask, const std::string & viaInterface)
+void Routing::addStaticRoute(const std::string & targetAddressMask, const std::string & viaAddress, const std::string & viaInterface)
 {
-  std::vector<std::string> masks = IP::getMasks();
-  int i;
-  for(i = 0; i < 33; i++)
-  {
-    if(masks[i] == netmask)
-    {
-      break;
-    }
-  }
-	if(i != 33)
-	{
-		std::string command = "ip route add " + targetAddress + " via " + viaAddress + "/" + std::to_string(i) + " dev " + viaInterface;
-	  system(command.c_str());
-  }
+	std::string command = "ip route add " + targetAddressMask + " via " + viaAddress + " dev " + viaInterface;
+  system(command.c_str());
 }
 
 void Routing::removeStaticRoute(const std::string & targetAddress, const std::string & netmask, const std::string & interface)
