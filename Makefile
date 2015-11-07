@@ -73,10 +73,11 @@ server.o: src/server.cpp
 module.o: src/module.cpp
 	$(CC) $(CFLAGS) src/module.cpp
 
-modules: sites/src/css.cpp sites/src/firewall.cpp sites/src/index.cpp sites/src/interfaces.cpp sites/src/management.cpp sites/src/routing.cpp sites/src/interfaces_save.cpp sites/src/firewall_save.cpp sites/src/management_save.cpp sites/src/routing_save.cpp src/helpers.cpp src/policyfactory.cpp src/common.cpp
+modules: sites/src/css.cpp sites/src/firewall.cpp sites/src/index.cpp sites/src/interfaces.cpp sites/src/management.cpp sites/src/routing.cpp sites/src/interfaces_save.cpp sites/src/firewall_save.cpp sites/src/management_save.cpp sites/src/routing_save.cpp src/helpers.cpp src/policyfactory.cpp src/common.cpp src/quagga_adapter.o
 	rm helpers.o policyfactory.o
 	$(CC) -c -Wall -W -std=c++11 -fPIC -o common.o src/common.cpp
 	$(CC) -c -Wall -W -std=c++11 -fPIC -o policyfactory.o src/policyfactory.cpp
+	$(CC) -c -Wall -W -std=c++11 -fPIC -o quagga_adapter.o src/quagga_adapter.cpp
 	$(CC) -c -Wall -W -std=c++11 -fPIC -o helpers.o src/helpers.cpp
 	$(CC) $(SOCFLAGS) -o sites/css.so sites/src/css.cpp helpers.o
 	$(CC) $(SOCFLAGS) -o sites/firewall.so sites/src/firewall.cpp helpers.o
@@ -87,7 +88,7 @@ modules: sites/src/css.cpp sites/src/firewall.cpp sites/src/index.cpp sites/src/
 	$(CC) $(SOCFLAGS) -o sites/interfaces_save.so sites/src/interfaces_save.cpp helpers.o
 	$(CC) $(SOCFLAGS) -o sites/firewall_save.so sites/src/firewall_save.cpp helpers.o policyfactory.o common.o
 	$(CC) $(SOCFLAGS) -o sites/management_save.so sites/src/management_save.cpp helpers.o
-	$(CC) $(SOCFLAGS) -o sites/routing_save.so sites/src/routing_save.cpp helpers.o
+	$(CC) $(SOCFLAGS) -o sites/routing_save.so sites/src/routing_save.cpp helpers.o quagga_adapter.o
 	$(CC) $(SOCFLAGS) -o sites/index_save.so sites/src/index_save.cpp helpers.o
 
 clean:

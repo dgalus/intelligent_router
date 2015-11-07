@@ -6,10 +6,12 @@ void QuaggaAdapter::executeCommand(int argc, char* argv[], bool enableMode)
   {
     std::vector<std::string> vars(argv, argv+argc);
     std::string command = "configure terminal\" -c \"";
-    std::for_each(vars.begin(), vars.end(), [&command](std::string & s){
-      command.append(s).append(" ");
-    });
-    pipeToQuaggaShell(command);    
+    for(std::vector<std::string>::iterator it = vars.begin(); it != vars.end(); it++)
+    {
+      command.append(*it);
+      command.append(" ");
+    }
+    pipeToQuaggaShell(command);
   }
   else
   {
@@ -20,9 +22,11 @@ void QuaggaAdapter::executeCommand(int argc, char* argv[], bool enableMode)
     }
     // concatenate vars
     std::string command = "";
-    std::for_each(vars.begin(), vars.end(), [&command](std::string & s){
-      command.append(s).append(" ");
-    });
+    for(std::vector<std::string>::iterator it = vars.begin(); it != vars.end(); it++)
+    {
+      command.append(*it);
+      command.append(" ");
+    }
     pipeToQuaggaShell(command);
   }
 }
