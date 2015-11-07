@@ -24,19 +24,16 @@ extern "C" std::string renderInterfacesTable()
 extern "C" std::string renderInterfaceSettings()
 {
 	std::string out = "";
-	int fd;
-	fd = socket(AF_INET, SOCK_DGRAM, 0);
 	for(std::vector<std::string>::iterator it = interfaces.begin(); it != interfaces.end(); it++)
 	{
 		out.append("<h4>Ustawienia " + *it + "</h4>\n");
-		if(it->find("lo") != std::string::npos) // if LO
+		if(it->find("lo") != std::string::npos)
 		{
 			out.append("<table class=\"table\"><tr>");
 			bool enabled = Interface::isInterfaceUp(*it);
 			out.append("<tr class=\"" + ((enabled) ? std::string("success") : std::string("error")) + "\"><td>Status: </td><td><b>" + ((enabled) ? std::string("Włączony") : std::string("Wyłączony")) + "</b></td></tr>");
 			out.append("<tr><td>Adres IP:</td><td><input type=\"text\" name=\"lo_ip\" value=\"");
 			out.append(Interface::getIPAddr(*it));
-			close(fd);
 			out.append("\" /></td></tr>");
 			out.append("<tr><td>Maska podsieci:</td><td><input type=\"text\" name=\"" + *it + "_mask\" value=\"");
 			out.append(IP::maskToString(Interface::getMask(*it)));
@@ -51,7 +48,6 @@ extern "C" std::string renderInterfaceSettings()
 			out.append("<tr><td>Adres MAC:</td><td><b>" + Interface::getHWAddr(*it) + "</b></td></tr>");
 			out.append("<tr><td>Adres IP:</td><td><input type=\"text\" name=\"" + *it + "_ip\" value=\"");
 			out.append(Interface::getIPAddr(*it));
-			close(fd);
 			out.append("\" /></td></tr>");
 			out.append("<tr><td>Maska podsieci:</td><td><input type=\"text\" name=\"" + *it + "_mask\" value=\"");
 			out.append(IP::maskToString(Interface::getMask(*it)));

@@ -20,7 +20,7 @@ void FileWriter::writeToFile(const std::string content)
       remove(path.c_str());
   }
 
-  fileDescriptor = open(path.c_str(), O_WRONLY | O_CREAT, 0644);
+  fileDescriptor = open(path.c_str(), O_WRONLY | O_CREAT, 0666);
   if(fileDescriptor == -1)
   {
       exit(UNABLE_TO_WRITE_TO_LOG_FILE);
@@ -37,7 +37,7 @@ void FileWriter::appendToFile(const std::string content)
 {
   size_t bytesWritten;
 
-  fileDescriptor = open(path.c_str(), O_WRONLY | O_APPEND, 0644);
+  fileDescriptor = open(path.c_str(), O_WRONLY | O_APPEND, 0666);
   if(fileDescriptor == -1)
   {
       exit(UNABLE_TO_WRITE_TO_LOG_FILE);
@@ -48,6 +48,7 @@ void FileWriter::appendToFile(const std::string content)
   {
       exit(ERROR_WHILE_WRITING_TO_LOG);
   }
+  bytesWritten = write(fileDescriptor, "\n", 1);
 
   close(fileDescriptor);
 }
@@ -60,6 +61,7 @@ std::string FileReader::readFile(const std::string & path)
   while(std::getline(infile, line))
   {
       output.append(line);
+      output.append("\n");
   }
   return output;
 }
@@ -370,7 +372,11 @@ std::string IP::maskToString(const std::string & input)
   {
     std::string s = input.substr(input.find("/")+1, 2);
     uint8_t size = atoi(s.c_str());
-    return std::string(getMasks()[size]);
+    if(size < 33)
+    {
+      return std::string(getMasks()[size]);
+    }
+    return "";
   }
   else
   {
@@ -710,8 +716,20 @@ void Routing::enableRoutingProtocol(const std::string & interfaceName, const std
   {
     std::string command = "configure terminal\" -c \"router " + protocol + "\" -c \"network " + interfaceName;
     QuaggaAdapter::pipeToQuaggaShell(command);
+    fileContentSplitted.push_back(protocol + " " + interfaceName);
     FileWriter* fw = new FileWriter(ROUTING_PROTOCOLS);
-    fw->appendToFile("\n" + protocol + " " + interfaceName);
+    std::string textToStore = "";
+    if(fileContentSplitted.begin() != fileContentSplitted.end())
+    {
+      textToStore.append(*(fileContentSplitted.begin()));
+      textToStore.append("\n");
+      for(std::vector<std::string>::iterator it = fileContentSplitted.begin() + 1; it != fileContentSplitted.end(); it++)
+      {
+        textToStore.append(*it);
+        textToStore.append("\n");
+      }
+      fw->writeToFile(textToStore);
+    }
   }
 }
 
@@ -741,10 +759,10 @@ void Routing::disableRoutingProtocol(const std::string & interfaceName, const st
   if(fileContentSplitted.begin() != fileContentSplitted.end())
   {
     fw->writeToFile(*(fileContentSplitted.begin()) + "\n");
-  }
-  for(std::vector<std::string>::iterator it = fileContentSplitted.begin() + 1; it != fileContentSplitted.end(); it++)
-  {
-    fw->appendToFile(*it + "\n");
+    for(std::vector<std::string>::iterator it = fileContentSplitted.begin() + 1; it != fileContentSplitted.end(); it++)
+    {
+      fw->appendToFile(*it + "\n");
+    }
   }
 }
 
