@@ -8,6 +8,7 @@ PolicyApplier::PolicyApplier(std::string criterionDirectory, std::string policyD
   criterionConfigFileTimestamp = FileHelper::getFileCreationTimestamp(CRITERIONS_CONFIG_PATH) - 1;
   PolicyFactory::getInstance()->setPolicyDirectory(policyDirectory);
   policyConfigFileTimestamp = FileHelper::getFileCreationTimestamp(POLICIES_CONFIG_PATH) - 1;
+  selectedPolicy = NULL;
 }
 
 PolicyApplier::~PolicyApplier()
@@ -164,7 +165,10 @@ void PolicyApplier::flushPolicies()
 {
   policies.erase(policies.begin(), policies.end());
   policiesNames.erase(policiesNames.begin(), policiesNames.end());
-  free(selectedPolicy);
+  if(selectedPolicy != NULL)
+  {
+    free(selectedPolicy);  
+  }
 }
 
 Criterion* PolicyApplier::handleCriterion(std::string name)

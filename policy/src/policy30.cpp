@@ -12,7 +12,7 @@ extern "C" const char* getName()
 
 extern "C" const char* getCommand()
 {
-  const char* command = "bash ../policy/policy30.sh";
+  const char* command = "/bin/sh ../policy/policy30.sh";
   return command;
 }
 

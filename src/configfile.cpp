@@ -51,8 +51,8 @@ void ConfigFile::readConfigFile()
         if(len > 0)
         {
             char* buf;
-            buf = (char *) malloc(len*sizeof(char));
-            memset(buf, 0, len);
+            buf = (char *) malloc(len*sizeof(char)+1);
+            memset(buf, 0, len*sizeof(char)+1);
 
             char* begin;
             begin = buf;

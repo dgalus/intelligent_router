@@ -73,7 +73,7 @@ server.o: src/server.cpp
 module.o: src/module.cpp
 	$(CC) $(CFLAGS) src/module.cpp
 
-modules: sites/src/css.cpp sites/src/firewall.cpp sites/src/index.cpp sites/src/interfaces.cpp sites/src/management.cpp sites/src/routing.cpp sites/src/interfaces_save.cpp sites/src/firewall_save.cpp sites/src/management_save.cpp sites/src/routing_save.cpp src/helpers.cpp src/policyfactory.cpp src/common.cpp src/quagga_adapter.o
+modules: sites/src/css.cpp sites/src/firewall.cpp sites/src/index.cpp sites/src/interfaces.cpp sites/src/management.cpp sites/src/routing.cpp sites/src/interfaces_save.cpp sites/src/firewall_save.cpp sites/src/management_save.cpp sites/src/routing_save.cpp src/helpers.cpp src/policyfactory.cpp src/common.cpp src/quagga_adapter.cpp
 	rm helpers.o policyfactory.o
 	$(CC) -c -Wall -W -std=c++11 -fPIC -o common.o src/common.cpp
 	$(CC) -c -Wall -W -std=c++11 -fPIC -o policyfactory.o src/policyfactory.cpp
