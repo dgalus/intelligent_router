@@ -10,7 +10,9 @@ extern "C" const char* getName()
 
 extern "C" const char* getCommand()
 {
-  const char* command = "/bin/sh ../policy/policy_blank.sh";
+char* command = (char *) malloc(strlen(POLICY_DIRECTORY) + strlen("/bin/sh ") + strlen("/policy_blank.sh") + 1);
+  memset(command, 0, strlen(POLICY_DIRECTORY) + strlen("/bin/sh ") + strlen("/policy_blank.sh") + 1);
+  sprintf(command, "/bin/sh %s/policy_blank.sh", POLICY_DIRECTORY);
   return command;
 }
 
