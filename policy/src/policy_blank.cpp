@@ -1,4 +1,7 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "../../src/configuration.h"
 
 static int aggressivnessLevel = 0;
 
