@@ -1,40 +1,21 @@
-#ifndef DAEMON_H
-#define DAEMON_H
+#include "adaptivefirewall.h"
 
-#include <stdio.h>
-#include <signal.h>
-#include <syslog.h>
-#include <errno.h>
-#include <stdlib.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <string.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <dlfcn.h>
-
-int pidFileDescriptor;
-
-void daemonShutdown()
-{
-    close(pidFileDescriptor);
-}
-
+/*
 void signalHandler(int sig)
 {
     switch(sig)
     {
         case SIGHUP:
-            syslog(LOG_WARNING, "%s: Received SIGHUP signal.", WWW_DAEMON_NAME);
+            syslog(LOG_WARNING, "Received SIGHUP signal.");
             break;
         case SIGINT:
         case SIGTERM:
-            syslog(LOG_INFO, "%s: Daemon exiting.", WWW_DAEMON_NAME);
+            syslog(LOG_INFO, "Daemon exiting");
             daemonShutdown();
             exit(EXIT_SUCCESS);
             break;
         default:
-            syslog(LOG_WARNING, "%s: Unhandled signal %s", WWW_DAEMON_NAME, strsignal(sig));
+            syslog(LOG_WARNING, "Unhandled signal %s", strsignal(sig));
             break;
     }
 }
@@ -99,7 +80,7 @@ void daemonize(char *runDir, char *pidFile)
     pidFileDescriptor = open(pidFile, O_RDWR | O_CREAT, 0600);
     if(pidFileDescriptor == -1)
     {
-        syslog(LOG_INFO, "Could not open PPID lock file %s, exiting.", pidFile);
+        syslog(LOG_INFO, "Could not open PID lock file %s, exiting.", pidFile);
         exit(EXIT_FAILURE);
     }
 
@@ -113,4 +94,40 @@ void daemonize(char *runDir, char *pidFile)
     write(pidFileDescriptor, str, strlen(str));
 }
 
-#endif // DAEMON_H
+void daemonShutdown()
+{
+    close(pidFileDescriptor);
+}
+*/
+
+int main(int argc, char* argv[])
+{
+    /* DEBUG */
+    /*
+     * setlogmask(LOG_UPTO(LOG_DEBUG));
+     * openlog(DAEMON_NAME, LOG_CONS, LOG_USER);
+     */
+
+    /* logging to syslog */
+    //setlogmask(LOG_UPTO(LOG_INFO));
+    //openlog(DAEMON_NAME, LOG_CONS | LOG_PERROR, LOG_USER);
+
+    /* setting up log file */
+    Log::getInstance()->setPath(std::string(LOG_FILE));
+    std::string test = "Adaptive Firewall Started";
+    Log::getInstance()->write(test);
+
+    /* Daemonize */
+    //daemonize((char *) "/tmp/", const_cast<char*>(m.adaptiveFirewallPidFile.c_str()));
+    //syslog(LOG_INFO, "Adaptive firewall running");
+
+    PolicyApplier* pa = new PolicyApplier(std::string(CRITERION_DIRECTORY), std::string(POLICY_DIRECTORY));
+    pa->loop();
+/*
+    while(1)
+    {
+        pa->loop();
+        sleep(5);
+    }*/
+  return 0;
+}

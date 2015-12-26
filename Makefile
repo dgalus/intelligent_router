@@ -1,13 +1,13 @@
 CC=g++
-CFLAGS=-c -O2 -std=c++11 -Wall -fPIE -I.
+CFLAGS=-c -O2 -std=c++11 -Wall -Wno-unused-result -fPIE -I.
 SOCFLAGS=-Wall -g -fPIC -std=c++11 -shared
 LIBS=-lpam -lpam_misc -ldl
 
-all: criterions policies adaptativefirewall set show modules www
+all: criterions policies adaptivefirewall set show modules www
 	rm *.o
 
-adaptativefirewall: common.o log.o policyfactory.o criterionfactory.o configfile.o policyapplier.o helpers.o quagga_adapter.o adaptativefirewall.o
-	$(CC) -Wl,-O1 common.o log.o policyfactory.o criterionfactory.o configfile.o policyapplier.o helpers.o quagga_adapter.o adaptativefirewall.o -o bin/adaptativefirewall -ldl
+adaptivefirewall: common.o log.o policyfactory.o criterionfactory.o configfile.o policyapplier.o helpers.o quagga_adapter.o adaptivefirewall.o
+	$(CC) -Wl,-O1 common.o log.o policyfactory.o criterionfactory.o configfile.o policyapplier.o helpers.o quagga_adapter.o adaptivefirewall.o -o bin/adaptivefirewall -ldl
 
 criterions: criterion/src/ping.cpp criterion/src/cpu_usage.cpp criterion/src/ram_usage.cpp criterion/src/processes.cpp
 	$(CC) $(SOCFLAGS) -o criterion/ping.so criterion/src/ping.cpp
@@ -16,8 +16,10 @@ criterions: criterion/src/ping.cpp criterion/src/cpu_usage.cpp criterion/src/ram
 	$(CC) $(SOCFLAGS) -o criterion/processes.so criterion/src/processes.cpp
 	$(CC) $(SOCFLAGS) -o criterion/interfaces_stats.so criterion/src/interfaces_stats.cpp
 
-policies: policy/src/policy30.cpp
+policies: policy/src/policy30.cpp policy/src/policy70.cpp policy/src/policy_blank.cpp
 	$(CC) $(SOCFLAGS) -o policy/policy30.so policy/src/policy30.cpp
+	$(CC) $(SOCFLAGS) -o policy/policy_blank.so policy/src/policy_blank.cpp
+	$(CC) $(SOCFLAGS) -o policy/policy70.so policy/src/policy70.cpp
 
 common.o: src/common.cpp
 	$(CC) $(CFLAGS) src/common.cpp
@@ -37,17 +39,17 @@ configfile.o: src/configfile.cpp
 policyapplier.o: src/policyapplier.cpp
 	$(CC) $(CFLAGS) src/policyapplier.cpp
 
-adaptativefirewall.o: src/adaptativefirewall.cpp
-	$(CC) $(CFLAGS) src/adaptativefirewall.cpp
+adaptivefirewall.o: src/adaptivefirewall.cpp
+	$(CC) $(CFLAGS) src/adaptivefirewall.cpp
 
-set: set.o quagga_adapter.o adaptative_firewall_adapter.o helpers.o policyfactory.o common.o
-	$(CC) -Wl,-O1 set.o quagga_adapter.o helpers.o adaptative_firewall_adapter.o policyfactory.o common.o -o bin/set -ldl
+set: set.o quagga_adapter.o adaptive_firewall_adapter.o helpers.o policyfactory.o common.o
+	$(CC) -Wl,-O1 set.o quagga_adapter.o helpers.o adaptive_firewall_adapter.o policyfactory.o common.o -o bin/set -ldl
 
 set.o: src/set.cpp
 	$(CC) $(CFLAGS) src/set.cpp
 
-show: show.o quagga_adapter.o adaptative_firewall_adapter.o helpers.o policyfactory.o common.o
-	$(CC) -Wl,-O1 show.o quagga_adapter.o helpers.o adaptative_firewall_adapter.o policyfactory.o common.o -o bin/show -ldl
+show: show.o quagga_adapter.o adaptive_firewall_adapter.o helpers.o policyfactory.o common.o
+	$(CC) -Wl,-O1 show.o quagga_adapter.o helpers.o adaptive_firewall_adapter.o policyfactory.o common.o -o bin/show -ldl
 
 show.o: src/show.cpp
 	$(CC) $(CFLAGS) src/show.cpp
@@ -55,8 +57,8 @@ show.o: src/show.cpp
 quagga_adapter.o: src/quagga_adapter.cpp
 	$(CC) $(CFLAGS) src/quagga_adapter.cpp
 
-adaptative_firewall_adapter.o: src/adaptative_firewall_adapter.cpp
-	$(CC) $(CFLAGS) src/adaptative_firewall_adapter.cpp
+adaptive_firewall_adapter.o: src/adaptive_firewall_adapter.cpp
+	$(CC) $(CFLAGS) src/adaptive_firewall_adapter.cpp
 
 www: common.o policyfactory.o helpers.o main.o server.o log.o module.o quagga_adapter.o
 	$(CC) -Wl,-O1 -o bin/www common.o policyfactory.o helpers.o main.o server.o log.o quagga_adapter.o module.o $(LIBS)
@@ -92,4 +94,4 @@ modules: sites/src/css.cpp sites/src/firewall.cpp sites/src/index.cpp sites/src/
 	$(CC) $(SOCFLAGS) -o sites/index_save.so sites/src/index_save.cpp helpers.o
 
 clean:
-	rm -rf *.o bin/adaptativefirewall bin/set bin/www sites/*.so bin/show criterion/*.so policy/*.so
+	rm -rf *.o bin/adaptivefirewall bin/set bin/www sites/*.so bin/show criterion/*.so policy/*.so

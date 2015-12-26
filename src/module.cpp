@@ -6,19 +6,15 @@
 
 #include "server.h"
 
-char* moduleDir;
+const char* moduleDir;
 
 struct ServerModule* moduleOpen(const char *moduleName)
 {
-    char* modulePath;
     void* handle;
     void (* moduleGenerate)(int, std::map<std::string, std::string>);
     struct ServerModule* module;
 
-    modulePath = (char *) xmalloc(strlen(moduleDir) + strlen(moduleName) + 2);
-    sprintf(modulePath, "%s/%s", moduleDir, moduleName);
-    handle = dlopen(modulePath, RTLD_LAZY);
-    free(modulePath);
+    handle = dlopen(moduleName, RTLD_LAZY);
     if(handle == NULL)
     {
         return NULL;

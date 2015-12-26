@@ -121,6 +121,7 @@ public:
   static std::vector<std::string> getDNSServers();
   static void setNameservers(std::vector<std::string> & addresses);
   static std::string getDefaultGW();
+  static void setDefaultGW(const std::string & address, const std::string & interface);
   static void enableRoutingProtocol(const std::string & interfaceName, const std::string & protocol);
   static void disableRoutingProtocol(const std::string & interfaceName, const std::string & protocol);
   static std::string getStaticRoutes();
@@ -131,13 +132,13 @@ public:
 class Firewall
 {
 public:
-  static bool getAdaptativeFirewallState();
-  static std::string getNonAdaptativeFirewallLoadedPolicy();
+  static bool getAdaptiveFirewallState();
+  static std::string getNonAdaptiveFirewallLoadedPolicy();
   static std::string getRules();
   static std::vector<std::string> getAvailablePolicies();
-  static void enableAdaptativeFirewall();
-  static void disableAdaptativeFirewall();
-  static void applyNonAdaptativeFirewallPolicy(std::string & policyName);
+  static void enableAdaptiveFirewall();
+  static void disableAdaptiveFirewall();
+  static void applyNonAdaptiveFirewallPolicy(std::string & policyName);
   static void forwardSinglePort(std::string app, uint16_t portOut, uint16_t portIn, bool isTCP, std::string ipAddress, bool enabled);
   static void flushAll();
   static void update();

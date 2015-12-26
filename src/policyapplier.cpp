@@ -79,6 +79,11 @@ void PolicyApplier::collectPolicies()
 
 void PolicyApplier::choosePolicy()
 {
+  if(selectedPolicy != NULL)
+  {
+    free(selectedPolicy);
+    selectedPolicy = NULL;
+  }
   std::for_each(criterions.begin(), criterions.end(), [this](Criterion* c){
     results.insert(std::pair<Criterion*, int>(c, c->calculate()));
 //    fprintf(stderr, "%s -> %d\n", results.rbegin()->first->name, results.rbegin()->second);
@@ -97,15 +102,26 @@ void PolicyApplier::choosePolicy()
 
     if(!policies.empty())
     {
-      selectedPolicy = policies.at(0);
-      int diff = abs(aggressivnessLevel - policies.at(0)->aggressivnessLevel);
-      std::for_each(policies.begin(), policies.end(), [this, &diff, &aggressivnessLevel](Policy* p){
-        if(diff > abs(aggressivnessLevel - p->aggressivnessLevel))
+      std::vector<Policy*> policiesToUse;
+      for(std::vector<Policy*>::iterator it = policies.begin(); it != policies.end(); it++)
+      {
+        if((*it)->aggressivnessLevel < aggressivnessLevel)
         {
-          diff = abs(aggressivnessLevel - p->aggressivnessLevel);
-          selectedPolicy = p;
+          policiesToUse.push_back(*it);
         }
-      });
+      }
+      if(!policiesToUse.empty())
+      {
+        selectedPolicy = policiesToUse.at(0);
+        int diff = abs(aggressivnessLevel - policiesToUse.at(0)->aggressivnessLevel);
+        std::for_each(policiesToUse.begin(), policiesToUse.end(), [this, &diff, &aggressivnessLevel](Policy* p){
+          if(diff > abs(aggressivnessLevel - p->aggressivnessLevel))
+          {
+            diff = abs(aggressivnessLevel - p->aggressivnessLevel);
+            selectedPolicy = p;
+          }
+        });
+      }
     }
   }
 }
@@ -122,19 +138,25 @@ void PolicyApplier::doCriterionSpecificActions()
     std::vector<int> levels;
     for(std::map<int, std::string>::iterator it2 = c->levels.begin(); it2 != c->levels.end(); it2++)
     {
-      levels.push_back(it2->first);
-    }
-    int nearest = levels.at(0);
-    int diff = abs(it->second - levels.at(0));
-    std::for_each(levels.begin(), levels.end(), [&nearest, &diff, &it](int & val){
-      if(diff > abs(val - it->second))
+      if(it2->first < it->second)
       {
-        nearest = val;
-        diff = abs(val - it->second);
+        levels.push_back(it2->first);
       }
-    });
-    std::string functionName = c->levels[nearest];
-    (c->functions[functionName])();
+    }
+    if(!levels.empty())
+    {
+      int nearest = levels.at(0);
+      int diff = abs(it->second - levels.at(0));
+      std::for_each(levels.begin(), levels.end(), [&nearest, &diff, &it](int & val){
+        if(diff > abs(val - it->second))
+        {
+          nearest = val;
+          diff = abs(val - it->second);
+        }
+      });
+      std::string functionName = c->levels[nearest];
+      (c->functions[functionName])();
+    }
   }
 }
 
@@ -167,7 +189,7 @@ void PolicyApplier::flushPolicies()
   policiesNames.erase(policiesNames.begin(), policiesNames.end());
   if(selectedPolicy != NULL)
   {
-    free(selectedPolicy);  
+    free(selectedPolicy);
   }
 }
 

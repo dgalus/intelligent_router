@@ -489,14 +489,14 @@ void Interface::setInterfaceAddress(std::string interfaceName, std::string & ipA
 	system(command.c_str());
 }
 
-bool Firewall::getAdaptativeFirewallState()
+bool Firewall::getAdaptiveFirewallState()
 {
-  std::string serviceName = "adaptativefirewall";
+  std::string serviceName = "adaptivefirewall";
   bool isRunning = Service::isServiceRunning(serviceName);
   return isRunning;
 }
 
-std::string Firewall::getNonAdaptativeFirewallLoadedPolicy()
+std::string Firewall::getNonAdaptiveFirewallLoadedPolicy()
 {
   return FileReader::readFile(LOADED_POLICY);
 }
@@ -541,9 +541,9 @@ std::string Firewall::getRules()
   return validatedContent;
 }
 
-void Firewall::enableAdaptativeFirewall()
+void Firewall::enableAdaptiveFirewall()
 {
-  system("adaptativefirewall");
+  system("adaptivefirewall");
 }
 
 void Firewall::flushAll()
@@ -553,17 +553,17 @@ void Firewall::flushAll()
   fw->writeToFile("");
 }
 
-void Firewall::disableAdaptativeFirewall()
+void Firewall::disableAdaptiveFirewall()
 {
-  system("kill `pidof adaptativefirewall`");
+  system("kill `pidof adaptivefirewall`");
 }
 
-void Firewall::applyNonAdaptativeFirewallPolicy(std::string & policyName)
+void Firewall::applyNonAdaptiveFirewallPolicy(std::string & policyName)
 {
-  std::string serviceName = "adaptativefirewall";
+  std::string serviceName = "adaptivefirewall";
   if(Service::isServiceRunning(serviceName))
   {
-    disableAdaptativeFirewall();
+    disableAdaptiveFirewall();
   }
   std::string policyDirectory = std::string(POLICY_DIRECTORY);
   FileWriter* fw = new FileWriter(LOADED_POLICY);
@@ -606,7 +606,7 @@ void Service::start(std::string name)
     system("zebra -d");
     return;
   }
-  if(name == "adaptativefirewall")
+  if(name == "adaptivefirewall")
   {
     system(name.c_str());
     return;
@@ -637,7 +637,7 @@ bool Service::isServiceRunning(std::string & name)
   if(name == "iptables")
   {
     p = popen(std::string("lsmod | grep ip_tables > /dev/null; echo $?").c_str(), "r");
-    fgets(buf, 256, p);
+    fgets(buf, 8, p);
     fclose(p);
     int val = atoi(buf);
     if(val == 0)
@@ -650,7 +650,7 @@ bool Service::isServiceRunning(std::string & name)
     }
   }
   p = popen(std::string("ps caux | grep " + name.substr(0, 15) + " > /dev/null; if [ $? -eq 0 ]; then echo \"yes\"; else echo \"no\"; fi").c_str(), "r");
-  fgets(buf, 256, p);
+  fgets(buf, 8, p);
   fclose(p);
   if(std::string(buf).find("yes") != std::string::npos)
   {
@@ -699,6 +699,12 @@ std::string Routing::getDefaultGW()
   std::string ret(buf);
   StringHelper::removeNewLineChars(ret);
   return ret;
+}
+
+void Routing::setDefaultGW(const std::string & address, const std::string & interface)
+{
+  std::string command = "route add default gw " + address + " " + interface;
+  system(command.c_str());
 }
 
 void Routing::enableRoutingProtocol(const std::string & interfaceName, const std::string & protocol)

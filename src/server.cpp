@@ -72,9 +72,6 @@ static void handleGet(int connectionFileDescriptor, const char* page)
   {
     page = "/index";
     goto begin;
-    char response[1024];
-    snprintf(response, sizeof(response), notFoundResponseTemplate.c_str(), page);
-    write(connectionFileDescriptor, response, strlen(response));
   }
   else
   {

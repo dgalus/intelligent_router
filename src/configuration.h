@@ -2,7 +2,7 @@
 #define CONFIGURATION_H
 
 
-#define AF_DAEMON_NAME "Adaptative Firewall"
+#define AF_DAEMON_NAME "Adaptive Firewall"
 #define WWW_DAEMON_NAME "Router web interface"
 
 #define CONFIG_DIRECTORY "../config/"

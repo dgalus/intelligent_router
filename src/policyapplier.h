@@ -7,7 +7,7 @@
 
 #include <math.h>
 
-#include "adaptativefirewall.h"
+#include "adaptivefirewall.h"
 #include "criterionfactory.h"
 #include "policyfactory.h"
 

@@ -74,7 +74,8 @@ extern "C" std::string renderDefaultGatewayTable()
 	out.append("<h4>Trasa domyślna</h4>");
 	out.append("<table class=\"table\"><tr><td>0.0.0.0</td><td>przez:</td><td><input type=\"text\" name=\"default_gw\" value=\"");
 	out.append(Routing::getDefaultGW());
-	out.append("\" /></td></tr></table>");
+	out.append("\" /></td></tr>");
+	out.append("<tr><td></td><td></td><td><input type=\"text\" name=\"default_gw_int\" /></td></tr></table>");
 	return out;
 }
 

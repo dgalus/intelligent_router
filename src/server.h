@@ -36,7 +36,7 @@ struct ServerModule
     const char* name;
     void (*generateFunction)(int, std::map<std::string, std::string>);
 };
-extern char* moduleDir;
+extern const char* moduleDir;
 extern struct ServerModule* moduleOpen(const char* modulePath);
 extern void moduleClose(struct ServerModule* module);
 extern void serverRun(struct in_addr localAddress, uint16_t port);

@@ -20,7 +20,7 @@ static std::vector<Serv> services = {
 	Serv("ospf6d", "OSPF6 Daemon"),
 	Serv("isisd", "IS-IS Daemon"),
 	Serv("iptables", "iptables firewall"),
-	Serv("adaptativefirewall", "Adaptative Firewall")
+	Serv("adaptivefirewall", "Adaptive Firewall")
 };
 
 extern "C" std::string renderServicesTable()

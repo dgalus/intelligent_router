@@ -12,19 +12,19 @@ extern "C" void doAction(std::map<std::string, std::string> & postVars)
   std::map<std::string, std::string>::iterator it = postVars.find("enable_af");
   if(it != postVars.end() && it->second == "true")
   {
-    Firewall::enableAdaptativeFirewall();
+    Firewall::enableAdaptiveFirewall();
   }
   it = postVars.find("disable_af");
   if(it != postVars.end() && it->second == "true")
   {
-    Firewall::disableAdaptativeFirewall();
+    Firewall::disableAdaptiveFirewall();
   }
   it = postVars.find("policy");
   if(it != postVars.end())
   {
     if(it->second != "none")
     {
-      Firewall::applyNonAdaptativeFirewallPolicy(postVars["policy"]);
+      Firewall::applyNonAdaptiveFirewallPolicy(postVars["policy"]);
     }
     else
     {

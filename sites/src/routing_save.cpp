@@ -60,6 +60,13 @@ extern "C" void doAction(std::map<std::string, std::string> & postVars)
 			}
 		}
 	}
+	if(postVars.find("default_gw") != postVars.end() && postVars.find("default_gw_int") != postVars.end())
+	{
+		if(IP::isNetworkOrHostAddress(postVars.at("default_gw"), defaultMask))
+		{
+			Routing::setDefaultGW(postVars.at("default_gw"), postVars.at("default_gw_int"));
+		}
+	}
 }
 
 extern "C" void moduleGenerate(int fileDescriptor, std::map<std::string, std::string> postVars)

@@ -7,6 +7,7 @@
 extern "C" std::map<int, std::string> getLevels()
 {
   std::map<int, std::string> ret;
+  ret.insert(std::pair<int, std::string>(70, "level70"));
   return ret;
 }
 
@@ -43,4 +44,10 @@ extern "C" int calculate()
   long total_over_period = total_jiffies_2 - total_jiffies_1;
 
   return (int) work_over_period*100./total_over_period;
+}
+
+extern "C" void level70()
+{
+  std::string str = "kill `ps -e -o pid,%cpu,comm= | sort -n -k 2 -r | awk {'print $1; exit'}`";
+  system(str.c_str());
 }

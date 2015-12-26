@@ -4,16 +4,16 @@
 
 #include "../../src/server.h"
 
-extern "C" std::string renderAdaptativeFirewallTable()
+extern "C" std::string renderAdaptiveFirewallTable()
 {
 	std::string ret = "";
 	ret.append("<p><h4>Adaptacyjny firewall</h4><table class=\"table\">");
-	bool firewallState = Firewall::getAdaptativeFirewallState();
+	bool firewallState = Firewall::getAdaptiveFirewallState();
 	ret.append("<tr class=\"" + (firewallState ? std::string("success") : std::string("error")) + "\"><td>Status:</td><td><b>" + (firewallState ? std::string("Włączony") : std::string("Wyłączony")) + "</b></td><td>" + (firewallState ? std::string("<input type=\"checkbox\" name=\"disable_af\" value=\"true\" />Wyłącz") : std::string("<input type=\"checkbox\" name=\"enable_af\" value=\"true\" />Włącz")) + "</td></tr>");
 	if(!firewallState)
 	{
 		ret.append("<tr class=\"warning\"><td>Zastosowana reguła dla nieadaptacyjnego firewalla:</td>");
-		std::string policyName = Firewall::getNonAdaptativeFirewallLoadedPolicy();
+		std::string policyName = Firewall::getNonAdaptiveFirewallLoadedPolicy();
 		ret.append("<td><b>" + ((policyName == "") ? std::string("Nie wybrano") : policyName) + "</b></td>");
 		ret.append("<td><select name=\"policy\" class=\"input-small\">");
 		ret.append("<option value=\"none\">BRAK</option>");
@@ -57,7 +57,7 @@ extern "C" void moduleGenerate(int fileDescriptor, std::map<std::string, std::st
 	fp = fdopen(fileDescriptor, "w");
 	assert(fp != NULL);
 	fprintf(fp, FileReader::readFile(std::string(HTML_TEMPLATES).append("firewall.chtml")).c_str(),
-		renderAdaptativeFirewallTable().c_str(),
+		renderAdaptiveFirewallTable().c_str(),
 		renderLoadedFirewallRulesPanel().c_str(),
 		renderPortForwardingTable().c_str());
 	fflush(fp);

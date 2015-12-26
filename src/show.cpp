@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string>
 
-#include "adaptative_firewall_adapter.h"
+#include "adaptive_firewall_adapter.h"
 #include "quagga_adapter.h"
 
 static std::string usageTemplate = "Usage: show <module> \n";
@@ -22,7 +22,7 @@ int main(int argc, char* argv[])
   std::string module = std::string(argv[1]);
   if(module == "firewall")
   {
-    AdaptativeFirewallAdapter::executeCommand(argc-2, argv+2);
+    AdaptiveFirewallAdapter::executeCommand(argc-2, argv+2);
   }
   else
   {
