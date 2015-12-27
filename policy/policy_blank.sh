@@ -1,3 +1,3 @@
 #!/bin/sh
 iptables -F
-/bin/sh ../policy/static.sh
+/bin/sh /opt/router/policy/static.sh
