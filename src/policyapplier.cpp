@@ -79,11 +79,6 @@ void PolicyApplier::collectPolicies()
 
 void PolicyApplier::choosePolicy()
 {
-  if(selectedPolicy != NULL)
-  {
-    free(selectedPolicy);
-    selectedPolicy = NULL;
-  }
   std::for_each(criterions.begin(), criterions.end(), [this](Criterion* c){
     results.insert(std::pair<Criterion*, int>(c, c->calculate()));
 //    fprintf(stderr, "%s -> %d\n", results.rbegin()->first->name, results.rbegin()->second);

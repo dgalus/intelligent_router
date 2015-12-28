@@ -48,7 +48,6 @@ void FileWriter::appendToFile(const std::string content)
   {
       exit(ERROR_WHILE_WRITING_TO_LOG);
   }
-  bytesWritten = write(fileDescriptor, "\n", 1);
 
   close(fileDescriptor);
 }

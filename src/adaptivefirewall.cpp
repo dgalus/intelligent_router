@@ -122,12 +122,10 @@ int main(int argc, char* argv[])
     //syslog(LOG_INFO, "Adaptive firewall running");
 
     PolicyApplier* pa = new PolicyApplier(std::string(CRITERION_DIRECTORY), std::string(POLICY_DIRECTORY));
-    pa->loop();
-/*
     while(1)
     {
         pa->loop();
         sleep(5);
-    }*/
+    }
   return 0;
 }
