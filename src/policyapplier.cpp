@@ -79,10 +79,16 @@ void PolicyApplier::collectPolicies()
 
 void PolicyApplier::choosePolicy()
 {
+  results.erase(results.begin(), results.end());
   std::for_each(criterions.begin(), criterions.end(), [this](Criterion* c){
     results.insert(std::pair<Criterion*, int>(c, c->calculate()));
-//    fprintf(stderr, "%s -> %d\n", results.rbegin()->first->name, results.rbegin()->second);
   });
+  /*
+   * for(auto it = results.begin(); it != results.end(); it++)
+   * {
+   * 	fprintf(stderr, "%p: %s -> %d\n", it, it->first->name, it->second);
+   * }
+   */
 
   if(!results.empty())
   {

@@ -17,10 +17,4 @@
 #include "log.h"
 #include "policyapplier.h"
 
-//void daemonShutdown();
-//void signalHandler(int sig);
-//void daemonize(char *runDir, char *pidFile);
-
-//int pidFileDescriptor;
-
 #endif
