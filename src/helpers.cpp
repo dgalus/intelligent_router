@@ -554,7 +554,7 @@ void Firewall::flushAll()
 
 void Firewall::disableAdaptiveFirewall()
 {
-  system("kill `pidof adaptivefirewall`");
+  system("kill -s SIGKILL `pidof adaptivefirewall`");
 }
 
 void Firewall::applyNonAdaptiveFirewallPolicy(std::string & policyName)
@@ -623,7 +623,7 @@ void Service::stop(std::string name)
   }
   else
   {
-    std::string command = "kill `pidof " + name + "`";
+    std::string command = "kill -s SIGKILL `pidof " + name + "`";
     system(command.c_str());
   }
 }
@@ -822,7 +822,7 @@ int Management::getWWWInterfacePort()
 
 void Management::disableWWWInterface()
 {
-  system("pkill `www`");
+  system("kill -s SIGKILL `pidof www`");
 }
 
 void Management::setWWWInterfacePort(uint16_t port)
