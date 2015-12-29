@@ -31,7 +31,7 @@ extern "C" std::string renderServicesTable()
 	std::for_each(services.begin(), services.end(), [&out](Serv & s) {
 		bool isRunning = Service::isServiceRunning(s.daemonName);
 		out.append("<tr class=\"" + ((isRunning) ? std::string("success") : std::string("error")) + "\"><td>" + s.serviceName + "</td><td>" + ((isRunning) ? std::string("Działa") : std::string("Nie działa")) + "</td>");
-		out.append("<td>" + ((isRunning) ? std::string("<input type=\"checkbox\" name=\"" + s.serviceName + "\" value=\"disable\" /> Wyłącz") : std::string("<input type=\"checkbox\" name=\"" + s.serviceName + "\" value=\"enable\" />Włącz")) + "</td></tr>");
+		out.append("<td>" + ((isRunning) ? std::string("<input type=\"checkbox\" name=\"" + s.daemonName + "\" value=\"disable\" /> Wyłącz") : std::string("<input type=\"checkbox\" name=\"" + s.daemonName + "\" value=\"enable\" />Włącz")) + "</td></tr>");
 	});
 	out.append("</tbody></table>");
 	return out;
