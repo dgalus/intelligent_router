@@ -542,7 +542,7 @@ std::string Firewall::getRules()
 
 void Firewall::enableAdaptiveFirewall()
 {
-  system("/etc/init.d/af start");
+  system("nohup adaptivefirewall &");
 }
 
 void Firewall::flushAll()
@@ -554,7 +554,7 @@ void Firewall::flushAll()
 
 void Firewall::disableAdaptiveFirewall()
 {
-  system("/etc/init.d/af stop");
+  system("kill `pidof adaptivefirewall`");
 }
 
 void Firewall::applyNonAdaptiveFirewallPolicy(std::string & policyName)
@@ -597,7 +597,7 @@ void Service::start(std::string name)
 {
   if(name == "iptables")
   {
-    system("/etc/init.d/fw start");
+    system("modprobe ip_tables && modprobe iptable_filter");
     return;
   }
   if(name == "quagga" || name == "zebra")
@@ -607,7 +607,7 @@ void Service::start(std::string name)
   }
   if(name == "adaptivefirewall")
   {
-    system("/etc/init.d/af start");
+    system("nohup adaptivefirewall &");
     return;
   }
   std::string command = name + " -d";
@@ -618,11 +618,8 @@ void Service::stop(std::string name)
 {
   if(name == "iptables")
   {
-    system("/etc/init.d/fw stop");
-  }
-  else if(name == "adaptivefirewall")
-  {
-	system("/etc/init.d/af stop");  
+    std::string command = "modprobe -r iptable_filter && modprobe -r ip_tables";
+    system(command.c_str());
   }
   else
   {
@@ -825,7 +822,7 @@ int Management::getWWWInterfacePort()
 
 void Management::disableWWWInterface()
 {
-  system("/etc/init.d/www stop");
+  system("pkill `www`");
 }
 
 void Management::setWWWInterfacePort(uint16_t port)
