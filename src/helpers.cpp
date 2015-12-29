@@ -484,7 +484,7 @@ void Interface::setInterfaceStatus(std::string & interfaceName, bool enabled)
 
 void Interface::setInterfaceAddress(std::string interfaceName, std::string & ipAddress, std::string & subnetMask)
 {
-	std::string command = "ip addr add " + ipAddress + "/" + subnetMask + " dev " + interfaceName;
+	std::string command = "vtysh -Ec \"configure terminal\" -c \"interface " + interfaceName + "\" -c \"ip address " + ipAddress + "/" + subnetMask + "\"";
 	system(command.c_str());
 }
 
