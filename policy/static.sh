@@ -1,16 +1,8 @@
 #!/bin/sh
-
 IPTABLES=/sbin/iptables
-IPSET=/sbin/ipset
-WWWPORT=8000
 
-$IPTABLES -F
+$IPTABLES -F -t nat
+$IPTABLES -P INPUT ACCEPT
+$IPTABLES -P OUTPUT ACCEPT
+$IPTABLES -P FORWARD ACCEPT
 
-# allow output connections
-$IPTABLES -A OUTPUT -j ACCEPT
-
-# allow forwarding
-$IPTABLES -A FORWARD -j ACCEPT
-
-# limit connections per IP
-$IPTABLES -A INPUT -p tcp --syn -m connlimit --connlimit-above 5 -j REJECT
