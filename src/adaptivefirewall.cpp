@@ -15,7 +15,7 @@ int main(int argc, char* argv[])
     while(1)
     {
         pa->loop();
-        sleep(5);
+        sleep(10);
     }
     
 	return 0;

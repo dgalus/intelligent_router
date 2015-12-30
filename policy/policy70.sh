@@ -13,6 +13,7 @@ $IPTABLES -P OUTPUT DROP
 $IPTABLES -P FORWARD ACCEPT
 $IPSET -N russia hash:net
 $IPSET -N china hash:net
+$IPTABLES -F
 
 $MODPROBE ip_conntrack
 $MODPROBE iptable_nat
@@ -75,8 +76,8 @@ $IPTABLES -A FORWARD -p udp -m string --algo bm --string "announce" -j DROP
 $IPTABLES -A FORWARD -p udp -m string --algo bm --string "info_hash" -j DROP 
 $IPTABLES -A FORWARD -p udp -m string --algo bm --string "tracker" -j DROP
 $IPTABLES -A FORWARD -m string --string "get_peers" --algo bm -j DROP 
-$IPTABLES -A FORWARD -m string --string "announce_peer" --algo bm -j LOGDROP 
-$IPTABLES -A FORWARD -m string --string "find_node" --algo bm -j LOGDROP
+$IPTABLES -A FORWARD -m string --string "announce_peer" --algo bm -j DROP 
+$IPTABLES -A FORWARD -m string --string "find_node" --algo bm -j DROP
 
 # Trying forward
 $IPTABLES -A FORWARD -p tcp --dport 6881:6889 -j DROP 
