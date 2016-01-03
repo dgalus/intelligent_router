@@ -1,40 +1,58 @@
 #include "adaptive_firewall_adapter.h"
 
-void AdaptiveFirewallAdapter::executeCommand(int argc, char* argv[])
+void AdaptiveFirewallAdapter::executeSetCommand(int argc, char* argv[])
 {
-  if(std::string(argv[0]) == "enable")
+  if(std::string(argv[0]) == "adaptive")
   {
-    if(std::string(argv[1]) == "manual")
-    {
-      std::string policy(argv[2]);
-      Firewall::applyNonAdaptiveFirewallPolicy(policy);
-    }
-    else if(std::string(argv[1]) == "adaptive")
-    {
-      Firewall::enableAdaptiveFirewall();
-    }
-    else
-    {
-      fprintf(stderr, "Invalid action. Valid actions are:\n\tmanual\n\tadaptive\n");
-    }
+    Firewall::enableAdaptiveFirewall();
   }
-  else if(std::string(argv[0]) == "disable")
+  else if(std::string(argv[0]) == "non-adaptive")
   {
-    if(std::string(argv[1]) == "manual")
+    Firewall::flushAll();
+    Firewall::disableAdaptiveFirewall();
+  }
+  else if(std::string(argv[0]) == "policy" && argc == 2)
+  {
+    Firewall::flushAll();
+    std::string policyName(argv[1]);
+    Firewall::applyNonAdaptiveFirewallPolicy(policyName);
+  }
+  else
+  {
+    fprintf(stderr, "Invalid action. Valid actions are:\n\t<Quaggga EXEC Command>\n\tfirewall\n\t\tadaptive\n\t\tnon-adaptive\n\t\tpolicy <policy_name>\n");
+  }
+}
+
+void AdaptiveFirewallAdapter::executeShowCommand(int argc, char* argv[])
+{
+  if(std::string(argv[0]) == "status")
+  {
+    std::string serviceName = "adaptivefirewall";
+    if(Service::isServiceRunning(serviceName))
     {
-      Firewall::flushAll();
-    }
-    else if(std::string(argv[1]) == "adaptive")
-    {
-      Firewall::disableAdaptiveFirewall();
+      printf("Adaptive firewall is running.\n");
     }
     else
     {
-      fprintf(stderr, "Invalid action. Valid actions are:\n\tmanual\n\tadaptive\n");
+      printf("Adaptive firewall is not running.\n");
+    }
+    printf("Loaded rules:\n%s\n", Firewall::getRules().c_str());
+  }
+  else if(std::string(argv[0]) == "policies" && argc == 1)
+  {
+    printf("Loaded rules:\n%s\n", StringHelper::replaceAll(Firewall::getRules(), "<br />", "\n").c_str());
+  }
+  else if(std::string(argv[0]) == "policies" && std::string(argv[1]) == "available")
+  {
+    std::vector<std::string> policies = Firewall::getAvailablePolicies();
+    printf("Available policies:\n");
+    for(std::vector<std::string>::iterator it = policies.begin(); it != policies.end(); it++)
+    {
+      printf("\t%s\n", it->c_str());
     }
   }
   else
   {
-    fprintf(stderr, "Invalid action. Valid actions are:\n\tenable\n\tdisable\n");
+    fprintf(stderr, "Invalid action. Valid actions are:\n\t<Quaggga Command>\n\tfirewall\n\t\tstatus\n\t\tpolicies\n\t\tpolicies available\n");
   }
 }

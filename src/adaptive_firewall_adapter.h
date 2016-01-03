@@ -9,7 +9,8 @@
 class AdaptiveFirewallAdapter
 {
 public:
-  static void executeCommand(int argc, char* argv[]);
+  static void executeSetCommand(int argc, char* argv[]);
+  static void executeShowCommand(int argc, char* argv[]);
 };
 
 #endif

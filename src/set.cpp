@@ -22,7 +22,7 @@ int main(int argc, char* argv[])
   std::string module = std::string(argv[1]);
   if(module == "firewall")
   {
-    AdaptiveFirewallAdapter::executeCommand(argc-2, argv+2);
+    AdaptiveFirewallAdapter::executeSetCommand(argc-2, argv+2);
   }
   else
   {
