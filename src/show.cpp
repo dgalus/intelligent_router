@@ -9,7 +9,7 @@ static std::string usageTemplate = "Usage: show <module> \n";
 
 void printUsage(int errorCode)
 {
-  fprintf(((errorCode == 0) ? stdout : stderr), "%s\n", usageTemplate.c_str());
+  fprintf(stderr, "%s\n", usageTemplate.c_str());
   exit(errorCode);
 }
 
@@ -17,7 +17,7 @@ int main(int argc, char* argv[])
 {
   if(argc < 2)
   {
-    printUsage(0);
+    printUsage(1);
   }
   std::string module = std::string(argv[1]);
   if(module == "firewall")

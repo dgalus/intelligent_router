@@ -36,7 +36,7 @@ void AdaptiveFirewallAdapter::executeShowCommand(int argc, char* argv[])
     {
       printf("Adaptive firewall is not running.\n");
     }
-    printf("Loaded rules:\n%s\n", Firewall::getRules().c_str());
+    printf("Loaded rules:\n%s\n", StringHelper::replaceAll(Firewall::getRules(), "<br />", "\n").c_str());
   }
   else if(std::string(argv[0]) == "policies" && argc == 1)
   {
